@@ -8,27 +8,51 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔹 MongoDB
-// Quand tu es prêt, ajoute ta variable Railway : process.env.MONGO_URL
-// const mongoURL = process.env.MONGO_URL || "mongodb://localhost:27017/testdb";
-// mongoose.connect(mongoURL)
-//   .then(() => console.log("MongoDB connecté"))
-//   .catch(err => console.log("Erreur MongoDB :", err));
+// 🔹 Connexion MongoDB
+const mongoURL = process.env.MONGO_URL || "mongodb://localhost:27017/testdb";
+
+mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("MongoDB connecté ✅"))
+  .catch(err => console.log("Erreur MongoDB ❌ :", err));
+
+// 🔹 Modèle User
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String
+});
+
+const User = mongoose.model("User", userSchema);
 
 // 🔹 Routes
 
 // Test serveur
 app.get("/", (req, res) => {
-  res.send("🚀 Server Railway minimal fonctionne !");
+  res.send("🚀 Server Railway + MongoDB fonctionne !");
 });
 
-// Exemple route /users (vide pour l’instant)
-app.get("/users", (req, res) => {
-  res.json([]);
+// GET /users → liste tous les utilisateurs
+app.get("/users", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erreur serveur");
+  }
 });
 
-// PORT dynamique fourni par Railway
+// POST /users → ajouter un utilisateur
+app.post("/users", async (req, res) => {
+  try {
+    const user = new User(req.body);
+    await user.save();
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erreur serveur");
+  }
+});
+
+// PORT dynamique pour Railway
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log("Serveur lancé sur le port", PORT);
-});
+app.listen(PORT, () => console.log("Serveur lancé sur le port", PORT));
