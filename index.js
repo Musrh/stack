@@ -9,11 +9,14 @@ app.use(cors());
 app.use(express.json());
 
 // 🔹 Connexion MongoDB
-const mongoURL = process.env.MONGO_URL || "mongodb://localhost:27017/testdb";
-
-mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("MongoDB connecté ✅"))
-  .catch(err => console.log("Erreur MongoDB ❌ :", err));
+const mongoURL = process.env.MONGO_URL; // ajoute MONGO_URL dans Railway
+if (!mongoURL) {
+  console.warn("⚠️ MONGO_URL n'est pas défini !");
+} else {
+  mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log("MongoDB connecté ✅"))
+    .catch(err => console.log("Erreur MongoDB ❌ :", err));
+}
 
 // 🔹 Modèle User
 const userSchema = new mongoose.Schema({
@@ -27,7 +30,7 @@ const User = mongoose.model("User", userSchema);
 
 // Test serveur
 app.get("/", (req, res) => {
-  res.send("🚀 Server Railway + MongoDB fonctionne !");
+  res.send("🚀 Backend Railway + MongoDB fonctionne !");
 });
 
 // GET /users → liste tous les utilisateurs
@@ -53,6 +56,6 @@ app.post("/users", async (req, res) => {
   }
 });
 
-// PORT dynamique pour Railway
+// ⚠️ Port dynamique fourni par Railway
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Serveur lancé sur le port", PORT));
+app.listen(PORT, () => console.log(`Server lancé sur le port ${PORT}`));
