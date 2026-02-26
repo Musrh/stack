@@ -1,15 +1,34 @@
-const express = require('express');
-const { resolve } = require('path');
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
 
 const app = express();
-const port = 3010;
 
-app.use(express.static('static'));
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.sendFile(resolve(__dirname, 'pages/index.html'));
+// 🔹 MongoDB
+// Quand tu es prêt, ajoute ta variable Railway : process.env.MONGO_URL
+// const mongoURL = process.env.MONGO_URL || "mongodb://localhost:27017/testdb";
+// mongoose.connect(mongoURL)
+//   .then(() => console.log("MongoDB connecté"))
+//   .catch(err => console.log("Erreur MongoDB :", err));
+
+// 🔹 Routes
+
+// Test serveur
+app.get("/", (req, res) => {
+  res.send("🚀 Server Railway minimal fonctionne !");
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+// Exemple route /users (vide pour l’instant)
+app.get("/users", (req, res) => {
+  res.json([]);
+});
+
+// PORT dynamique fourni par Railway
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("Serveur lancé sur le port", PORT);
 });
