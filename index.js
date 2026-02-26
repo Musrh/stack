@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 // 🔹 Connexion MongoDB
-const mongoURL = process.env.MONGO_URL; // ajoute MONGO_URL dans Railway
+const mongoURL = process.env.MONGO_URL; // doit être défini dans Railway
 if (!mongoURL) {
   console.warn("⚠️ MONGO_URL n'est pas défini !");
 } else {
@@ -18,12 +18,11 @@ if (!mongoURL) {
     .catch(err => console.log("Erreur MongoDB ❌ :", err));
 }
 
-// 🔹 Modèle User
+// 🔹 Modèle User pour test
 const userSchema = new mongoose.Schema({
   name: String,
   email: String
 });
-
 const User = mongoose.model("User", userSchema);
 
 // 🔹 Routes
